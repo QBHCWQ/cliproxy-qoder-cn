@@ -1,5 +1,7 @@
 *
 !Dockerfile
+!Dockerfile.render
+!render-entrypoint.sh
 !plugin/
 !plugin/*.go
 !plugin/go.mod

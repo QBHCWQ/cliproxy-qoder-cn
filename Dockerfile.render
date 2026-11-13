@@ -1,0 +1,4 @@
+FROM ghcr.io/qbhcwq/cliproxy-qoder-cn@sha256:075afa759537e0a43d160855054d4ddaab0ae17b3df87b4db236a4768895c552
+COPY --chmod=0755 render-entrypoint.sh /usr/local/bin/qoder-entrypoint
+ENTRYPOINT ["/usr/local/bin/qoder-entrypoint"]
+CMD []
