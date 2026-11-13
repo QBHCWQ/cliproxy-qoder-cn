@@ -1,0 +1,9 @@
+FROM golang:1.27.4-bookworm AS plugin-builder
+WORKDIR /src
+COPY plugin/go.mod plugin/go.sum ./
+RUN go mod download
+COPY plugin/ ./
+RUN go vet ./... && CGO_ENABLED=1 GOAMD64=v1 go build -trimpath -buildmode=c-shared -o /out/qoder.so .
+
+FROM docker.io/eceasy/cli-proxy-api@sha256:d42a14f9fb61a76b970cb932a93ffa12daa56d913580d03ac5bc71162ac8818b
+COPY --from=plugin-builder --chmod=0644 /out/qoder.so /CLIProxyAPI/plugins/qoder.so

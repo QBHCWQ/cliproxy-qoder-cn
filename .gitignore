@@ -1,0 +1,8 @@
+.env*
+auth/
+auths/
+config.yaml
+*.so
+*.h
+*.log
+*.tar.gz

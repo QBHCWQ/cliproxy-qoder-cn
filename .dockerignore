@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!plugin/
+!plugin/*.go
+!plugin/go.mod
+!plugin/go.sum
