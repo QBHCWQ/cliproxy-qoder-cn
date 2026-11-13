@@ -112,6 +112,22 @@ func buildQoderRequestPayload(payload []byte, model, userID string) ([]byte, err
 			}
 			continue
 		}
+		// Qoder's message DTO uses camelCase for the tool-result link.
+		// Preserve the standard field too for gateways that accept OpenAI JSON.
+		if meta.Role == "tool" {
+			var message map[string]json.RawMessage
+			if err := json.Unmarshal(raw, &message); err != nil {
+				return nil, fmt.Errorf("decode tool message %d: %w", i, err)
+			}
+			if id, ok := message["tool_call_id"]; ok {
+				message["toolCallId"] = id
+			}
+			encoded, err := json.Marshal(message)
+			if err != nil {
+				return nil, fmt.Errorf("encode tool message %d: %w", i, err)
+			}
+			raw = encoded
+		}
 		messages = append(messages, append(json.RawMessage(nil), raw...))
 		if meta.Role == "user" {
 			lastUserText = qoderContentText(meta.Content)
