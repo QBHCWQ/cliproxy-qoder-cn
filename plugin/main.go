@@ -82,6 +82,7 @@ type registration struct {
 }
 
 type registrationCapability struct {
+	QuotaProvider         bool                         `json:"quota_provider"`
 	ModelProvider         bool                         `json:"model_provider"`
 	AuthProvider          bool                         `json:"auth_provider"`
 	Executor              bool                         `json:"executor"`
@@ -153,8 +154,12 @@ func handleMethod(method string, request []byte) ([]byte, error) {
 		return handleModelStatic(request)
 	case pluginabi.MethodModelForAuth:
 		return handleModelForAuth(request)
-	case pluginabi.MethodAuthIdentifier, pluginabi.MethodExecutorIdentifier:
+	case pluginabi.MethodAuthIdentifier, pluginabi.MethodExecutorIdentifier, pluginabi.MethodQuotaIdentifier:
 		return okEnvelope(identifierResponse{Identifier: pluginIdentifier})
+	case pluginabi.MethodQuotaDescribe:
+		return okEnvelope(pluginapi.QuotaDescribeResponse{SupportedProviders: []string{pluginIdentifier}, DisplayName: "Qoder Credits"})
+	case pluginabi.MethodQuotaFetch:
+		return handleQuotaFetch(request)
 	case pluginabi.MethodAuthParse:
 		return handleAuthParse(request)
 	case pluginabi.MethodAuthLoginStart:
@@ -194,6 +199,7 @@ func pluginRegistration() registration {
 			},
 		},
 		Capabilities: registrationCapability{
+			QuotaProvider:         true,
 			ModelProvider:         true,
 			AuthProvider:          true,
 			Executor:              true,
